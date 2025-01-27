@@ -18,8 +18,8 @@ function createPrisma() {
           url: process.env.REPLICA_URL!,
           defaultReadClient: 'replica',
         },
-        (client) =>
-          (client as PrismaClient).$extends({
+        (client: PrismaClient) =>
+          client.$extends({
             query: {
               $allOperations({ args, operation, query }) {
                 logs.push({ server: 'replica', operation })
@@ -45,8 +45,8 @@ function createPrisma() {
           url: process.env.REPLICA_URL!,
           defaultReadClient: 'primary',
         },
-        (client) =>
-          (client as PrismaClient).$extends({
+        (client: PrismaClient) =>
+          client.$extends({
             query: {
               $allOperations({ args, operation, query }) {
                 logs.push({ server: 'replica', operation })
@@ -68,9 +68,9 @@ function createPrisma() {
   return [basePrisma, prisma, prismaDefaultPrimary] as const
 }
 
-let basePrisma: ReturnType<typeof createPrisma>
-let prisma: ReturnType<typeof createPrisma>
-let prismaDefaultPrimary: ReturnType<typeof createPrisma>
+let basePrisma: ReturnType<typeof createPrisma>[0]
+let prisma: ReturnType<typeof createPrisma>[1]
+let prismaDefaultPrimary: ReturnType<typeof createPrisma>[2]
 
 beforeAll(async () => {
   await execa('pnpm', ['prisma', 'db', 'push', '--schema', 'tests/prisma/schema.prisma'], {

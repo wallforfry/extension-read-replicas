@@ -25,7 +25,8 @@ const readOperations = [
 
 export const readReplicas = (options: ReplicasOptions, configureReplicaClient?: ConfigureReplicaCallback) =>
   Prisma.defineExtension((client) => {
-    const PrismaClient = Object.getPrototypeOf(client).constructor
+    // @ts-expect-error This is a private API, we need to access it to get the original PrismaClient constructor class
+    const PrismaClient = Object.getPrototypeOf(client['_originalClient'] || client).constructor
     const datasourceName = Object.keys(options).find((key) => !key.startsWith('$'))
     if (!datasourceName) {
       throw new Error(`Read replicas options must specify a datasource`)
